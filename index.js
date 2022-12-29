@@ -1,0 +1,78 @@
+const express = require('express');
+const bodyparser = require('body-parser')
+// const mongoose = require('mongoose');
+const connectDB = require('./config/database');
+// const { application } = require('express');
+const { UrlModel } = require('./models/urlshort')
+const cors = require("cors")
+
+connectDB()
+const port = process.env.PORT
+const app = express()
+
+app.use(express.json())
+app.use(cors({
+    origin: "*",
+    credentials: true
+}))
+
+const generateUrlId = () => {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let rndResult = '';
+    const charactersLength = characters.length;
+    for (let i = 0; i < 5; i++) {
+        rndResult += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    console.log(rndResult)
+    return rndResult
+}
+
+
+app.use(express.json());
+app.use(bodyparser.urlencoded({ extended: false }));
+
+
+app.get("/allUrl", (req, res) => {
+    try {
+        UrlModel.find().then((data) => {
+            res.json(data)
+        })
+    } catch (error) {
+        res.send(error)
+    }
+})
+
+
+app.post('/create', (req, res) => {
+    // Create a Short Url
+    let urlShort = new UrlModel({
+        longUrl: req.body.longUrl,
+        shortUrl: generateUrlId()
+
+    })
+    // Store it in DB
+    urlShort.save((err, data) => {
+        if (err) throw err;
+        res.send(`http://localhost:8000/${urlShort.shortUrl}`)
+    })
+})
+
+app.get('/:urlId', (req, res) => {
+
+    console.log(req.body)
+    let urlShort = UrlModel.findOne({ shortUrl: req.params.urlId }, (err, data) => {
+        if (err) throw err;
+        UrlModel.findByIdAndUpdate({ _id: data.id }, { $inc: { clickCount: 1 } }, (err, updateData) => {
+            if (err) throw err;
+            // res.redirect(data.longUrl)
+        })
+        res.redirect(data.longUrl)
+        // console.log(data)
+    })
+
+})
+
+
+app.listen(port, () => {
+    console.log(`Port is Running in ${port}`);
+})

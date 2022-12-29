@@ -53,7 +53,7 @@ app.post('/create', (req, res) => {
     // Store it in DB
     urlShort.save((err, data) => {
         if (err) throw err;
-        res.send(`http://localhost:8000/${urlShort.shortUrl}`)
+        res.send(`https://ak-shorturl.netlify.app/${urlShort.shortUrl}`)
     })
 })
 

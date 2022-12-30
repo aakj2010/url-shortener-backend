@@ -11,7 +11,7 @@ const app = express()
 
 app.use(express.json())
 
-app.use(cors({ origin: "*" }))
+app.use(cors({ origin: "https://ak-shorturl.netlify.app" }))
 
 const generateUrl = () => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -51,7 +51,7 @@ app.post('/create', (req, res) => {
     urlShort.save((err, data) => {
         if (err) throw err;
         // res.send(`https://ak-shorturl.netlify.app/${urlShort.shortUrl}`)
-        res.send(`http://localhost:8000/${urlShort.shortUrl}`)
+        res.send(`https://url-shortener-backend-mu.vercel.app/${urlShort.shortUrl}`)
     })
 })
 

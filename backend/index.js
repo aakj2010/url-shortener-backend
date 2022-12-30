@@ -3,6 +3,7 @@ const bodyparser = require('body-parser')
 const connectDB = require('./config/database')
 const { UrlModel } = require('./models/urlshort')
 const cors = require("cors")
+require("dotenv").config();
 
 connectDB()
 const port = process.env.PORT || 5000
